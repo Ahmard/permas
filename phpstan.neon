@@ -1,0 +1,7 @@
+parameters:
+    level: 6
+    paths: ['server.php', 'app']
+    checkMissingIterableValueType: false
+    checkGenericClassInNonGenericObjectType: false
+    ignoreErrors:
+        - '#Attribute class JetBrains\\PhpStorm.*#'
