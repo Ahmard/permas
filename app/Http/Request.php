@@ -95,10 +95,10 @@ class Request
         }
 
         if ($this->parsedJsonBody) {
-            return $this->parsedJsonBody[$key];
+            return $this->parsedJsonBody[$key] ?? null;
         }
 
-        return $this->request->post[$key];
+        return $this->request->post[$key] ?? null;
     }
 
     /**

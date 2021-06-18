@@ -101,13 +101,11 @@ class RootServer
 
     protected static function generateNotFoundResponse(Request $request): void
     {
-        $request->response()->status(404);
-        $request->response()->write('Not Found.');
+        $request->response()->html('Not Found.', 404);
     }
 
     protected static function generateMethodNotAllowedResponse(Request $request): void
     {
-        $request->response()->status(405);
-        $request->response()->write('Method Not Allowed.');
+        $request->response()->html('Method Not Allowed.', 405);
     }
 }

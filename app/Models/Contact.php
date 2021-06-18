@@ -15,13 +15,15 @@ class Contact extends Model
     ];
 
 
-    public static function create(int $userId, array $userData)
+    public static function create(int $userId, array $userData): Model|Contact
     {
         $userData['user_id'] = Auth::userId();
         $contact = self::query()->create($userData);
 
         ContactAddress::query()->create([
             ''
-        ])
+        ]);
+
+        return $contact;
     }
 }

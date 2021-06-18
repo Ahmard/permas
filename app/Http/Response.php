@@ -10,6 +10,9 @@ use Nette\Utils\JsonException;
 use Swoole\Http\Response as SWResponse;
 use Symfony\Component\VarDumper\Cloner\VarCloner;
 use Symfony\Component\VarDumper\Dumper\HtmlDumper;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 /**
  * Class Response
@@ -18,7 +21,6 @@ use Symfony\Component\VarDumper\Dumper\HtmlDumper;
  */
 class Response
 {
-    private static HtmlDumper $htmlDumper;
     protected Request $request;
 
     public function __construct(
@@ -40,20 +42,29 @@ class Response
         return $this->response->$name(...$arguments);
     }
 
-    public function html(string $htmlCode): void
+    public function html(string $htmlCode, int $status = 200, array $headers = []): void
     {
         if ($this->response->isWritable()) {
-            $this->response->setHeader('Content-Type', 'text/html');
-            $this->write($htmlCode);
-            $this->end();
+            $this->end(
+                $htmlCode,
+                $status,
+                array_merge(['Content-Type' => 'text/html'], $headers)
+            );
         }
     }
 
+    /**
+     * @throws RuntimeError
+     * @throws SyntaxError
+     * @throws LoaderError
+     */
     public function view(string $filePath, array $data = []): void
     {
         if (!$this->response->isWritable()) {
             return;
         }
+
+        $filePath = !str_contains($filePath, '.twig') ? "$filePath.twig" : $filePath;
 
         $this->html(
             Env::templateEngine($this->request)
@@ -63,11 +74,17 @@ class Response
 
     /**
      * @param array|object|null $encodeAble
+     * @param int $status
+     * @param array $headers
      * @throws JsonException
      */
-    public function json(null|array|object $encodeAble): void
+    public function json(null|array|object $encodeAble, int $status = 200, array $headers = []): void
     {
-        $this->end(Json::encode($encodeAble));
+        $this->end(
+            Json::encode($encodeAble),
+            $status,
+            array_merge(['Content-Type' => 'application/json'], $headers)
+        );
     }
 
     /**
@@ -114,15 +131,21 @@ class Response
     protected static function createDump(mixed $data): string
     {
         $clonedData = (new VarCloner())->cloneVar($data);
-        return (string)(new HtmlDumper(false))->dump($clonedData, true);
+        return (string)(new HtmlDumper(null))->dump($clonedData, true);
     }
 
     /**
      * @param mixed|null $content
      */
-    public function end(mixed $content = null): void
+    public function end(mixed $content = null, int $status = 200, array $headers = []): void
     {
         if ($this->response->isWritable()) {
+            foreach ($headers as $key => $value) {
+                $this->response->setHeader($key, $value);
+            }
+
+            $this->response->setHeader('Server', $_ENV['APP_NAME']);
+            $this->response->setStatusCode($status);
             $this->response->end($content);
         }
     }

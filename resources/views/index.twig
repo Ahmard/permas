@@ -1,0 +1,12 @@
+{% extends 'layouts/app.twig' %}
+
+{% block title('Homepage') %}
+
+{% block content %}
+    <div class="card">
+        <div class="card-header">Main</div>
+        <div class="card-body">
+            <p>Hello, {{ auth.user.name }}</p>
+        </div>
+    </div>
+{% endblock content %}

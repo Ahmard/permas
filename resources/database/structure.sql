@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS `users`
 CREATE TABLE IF NOT EXISTS `note_categories`
 (
     `id`         INTEGER PRIMARY KEY AUTOINCREMENT,
+    `parent_id`  INTEGER               DEFAULT NULL,
     `user_id`    INTEGER      NOT NULL,
     `name`       VARCHAR(100) NOT NULL,
     `created_at` VARCHAR(30)  NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -98,3 +99,7 @@ CREATE TABLE IF NOT EXISTS `contact_addresses`
     `updated_at` VARCHAR(30)  NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (`contact_id`) REFERENCES `contacts` (`id`)
 );
+
+
+INSERT INTO `users`(name, email, password)
+VALUES ('Ahmard', 'ahmard06@gmail.com', '$2y$10$iL6EdHdLwY847zrSCB7l2.ChmzEt6MVN9I3ulhLH5lDdAh4YW19Fa');

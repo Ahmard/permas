@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\NoteCategoryController;
 use App\Http\Controllers\Api\NoteController;
 use App\Http\Controllers\AuthController;
+use QuickRoute\Crud;
 use QuickRoute\Route;
 
 Route::prefix('users')->group(function () {
@@ -12,6 +13,13 @@ Route::prefix('users')->group(function () {
 
 Route::middleware('auth:user')
     ->group(function () {
-        Route::resource('notes', NoteController::class, 'noteId');
-        Route::resource('categories', NoteCategoryController::class);
+        Crud::create('notes', NoteController::class)
+            ->numericParameter('noteId')
+            ->disableDestroyAllRoute()
+            ->go();
+
+        Crud::create('categories', NoteCategoryController::class)
+            ->numericParameter('catId')
+            ->disableDestroyAllRoute()
+            ->go();
     });

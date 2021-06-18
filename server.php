@@ -44,6 +44,7 @@ $server->on('start', function (Server $server) use ($dotEnv) {
             __DIR__ . '/app',
             __DIR__ . '/resources/routes/web.php',
             __DIR__ . '/resources/routes/api.php',
+            __DIR__ . '/resources/views',
             __FILE__,
         ];
 

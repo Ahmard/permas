@@ -97,7 +97,7 @@ class AuthController
 
             $response->jsonSuccess([
                 'message' => 'Account has been created successfully',
-                'user' => $message
+                'user' => $user
             ]);
         } catch (Throwable $exception) {
             $response->jsonError($exception->getMessage());
